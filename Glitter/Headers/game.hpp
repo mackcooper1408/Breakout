@@ -6,6 +6,8 @@
 
 #include "sprite_renderer.hpp"
 #include "game_level.hpp"
+#include "game_object.hpp"
+#include "ball_object.hpp"
 
 enum GameState
 {
@@ -39,6 +41,7 @@ public:
 private:
   SpriteRenderer *Renderer;
   GameObject *Player;
+  BallObject *Ball;
 };
 
 #endif // GAME_H

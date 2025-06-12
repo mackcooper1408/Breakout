@@ -5,6 +5,10 @@
 const glm::vec2 PLAYER_SIZE(100.0f, 20.0f);
 // Initial velocity of the player paddle
 const float PLAYER_VELOCITY(500.0f);
+// Radius of the ball object
+const float BALL_RADIUS = 12.5f;
+// Initial velocity of the Ball
+const glm::vec2 INITIAL_BALL_VELOCITY(100.0f, -350.0f);
 
 Game::Game(unsigned int width, unsigned int height)
     : State(GAME_MENU), Width(width), Height(height)
@@ -53,6 +57,12 @@ void Game::Init()
       this->Width / 2 - PLAYER_SIZE.x / 2, this->Height - PLAYER_SIZE.y - 20.0f);
   this->Player = new GameObject(playerPos, PLAYER_SIZE, ResourceManager::GetTexture("paddle"));
 
+  // Initialize ball object
+  glm::vec2 ballPos = playerPos + glm::vec2(PLAYER_SIZE.x / 2.0f - BALL_RADIUS,
+                                            -BALL_RADIUS * 2.0f);
+  this->Ball = new BallObject(ballPos, BALL_RADIUS, INITIAL_BALL_VELOCITY,
+                              ResourceManager::GetTexture("face"));
+
   // Set initial game state
   // TODO: SET VIA MENU
   this->State = GAME_ACTIVE;
@@ -70,13 +80,32 @@ void Game::ProcessInput(float dt)
     {
       // Move player paddle left
       if (this->Player->Position.x >= 0.0f)
+      {
         this->Player->Position.x -= velocity;
+        if (this->Ball->Stuck)
+        {
+          // If the ball is stuck, move it with the paddle
+          this->Ball->Position.x -= velocity;
+        }
+      }
     }
     if (this->Keys[GLFW_KEY_D] || this->Keys[GLFW_KEY_RIGHT])
     {
       // Move player paddle right
       if (this->Player->Position.x <= this->Width - this->Player->Size.x)
+      {
         this->Player->Position.x += velocity;
+        if (this->Ball->Stuck)
+        {
+          // If the ball is stuck, move it with the paddle
+          this->Ball->Position.x += velocity;
+        }
+      }
+    }
+    if (this->Keys[GLFW_KEY_SPACE])
+    {
+      // Release the ball from the paddle
+      this->Ball->Stuck = false;
     }
   }
 }
@@ -85,6 +114,7 @@ void Game::Update(float dt)
 {
   // Update game logic, physics, etc.
   // This function should update the game state based on the elapsed time since the last frame.
+  this->Ball->Move(dt, this->Width);
 }
 
 void Game::Render()
@@ -100,5 +130,7 @@ void Game::Render()
     this->Levels[this->CurrentLevel].Draw(*this->Renderer);
     // Draw player paddle
     this->Player->Draw(*this->Renderer);
+    // Draw ball object
+    this->Ball->Draw(*this->Renderer);
   }
 }
