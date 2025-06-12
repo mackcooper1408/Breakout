@@ -50,12 +50,14 @@ file(GLOB PROJECT_CONFIGS CMakeLists.txt
 file(GLOB PROJECT_TEXTURES Glitter/Textures/*.png
                           Glitter/Textures/*.jpg
                           Glitter/Textures/*.hdr)
+file(GLOB PROJECT_LEVELS Glitter/Levels/*.lvl)
 
 source_group("Headers" FILES ${PROJECT_HEADERS})
 source_group("Shaders" FILES ${PROJECT_SHADERS})
 source_group("Sources" FILES ${PROJECT_SOURCES})
 source_group("Vendors" FILES ${VENDORS_SOURCES})
 source_group("Textures" FILES ${PROJECT_TEXTURES})
+source_group("Levels" FILES ${PROJECT_LEVELS})
 
 add_definitions(-DGLFW_INCLUDE_NONE
                 -DPROJECT_SOURCE_DIR=\"${PROJECT_SOURCE_DIR}\")
