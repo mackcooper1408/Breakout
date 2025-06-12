@@ -5,6 +5,7 @@
 #include <GLFW/glfw3.h>
 
 #include "sprite_renderer.hpp"
+#include "game_level.hpp"
 
 enum GameState
 {
@@ -20,6 +21,8 @@ public:
   GameState State;
   bool Keys[1024];
   unsigned int Width, Height;
+  std::vector<GameLevel> Levels;
+  unsigned int CurrentLevel;
 
   // Constructor/Destructor
   Game(unsigned int width, unsigned int height);
@@ -35,6 +38,7 @@ public:
 
 private:
   SpriteRenderer *Renderer;
+  GameObject *Player;
 };
 
 #endif // GAME_H
