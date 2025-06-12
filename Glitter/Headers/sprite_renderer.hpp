@@ -1,3 +1,6 @@
+#ifndef SPRITE_RENDERER_HPP
+#define SPRITE_RENDERER_HPP
+
 #include <glad/glad.h>
 
 #include "shader.hpp"
@@ -19,3 +22,5 @@ private:
 
   void initRenderData();
 };
+
+#endif // SPRITE_RENDERER_HPP
