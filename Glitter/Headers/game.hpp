@@ -38,10 +38,15 @@ public:
   void Update(float dt);
   void Render();
 
+  void DoCollisions();
+
 private:
   SpriteRenderer *Renderer;
   GameObject *Player;
   BallObject *Ball;
+
+  bool CheckCollision(BallObject &one, GameObject &two);
+  bool CheckCollision(GameObject &one, GameObject &two);
 };
 
 #endif // GAME_H

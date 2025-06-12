@@ -115,6 +115,7 @@ void Game::Update(float dt)
   // Update game logic, physics, etc.
   // This function should update the game state based on the elapsed time since the last frame.
   this->Ball->Move(dt, this->Width);
+  this->DoCollisions();
 }
 
 void Game::Render()
@@ -132,5 +133,66 @@ void Game::Render()
     this->Player->Draw(*this->Renderer);
     // Draw ball object
     this->Ball->Draw(*this->Renderer);
+  }
+}
+
+bool Game::CheckCollision(GameObject &one, GameObject &two)
+{
+  // Check for collision between two game objects
+  // This function should return true if the two game objects are colliding.
+  bool collisionX = one.Position.x + one.Size.x >= two.Position.x &&
+                    two.Position.x + two.Size.x >= one.Position.x;
+  bool collisionY = one.Position.y + one.Size.y >= two.Position.y &&
+                    two.Position.y + two.Size.y >= one.Position.y;
+  return collisionX && collisionY;
+}
+
+bool Game::CheckCollision(BallObject &one, GameObject &two)
+{
+  // Check for collision between a ball object and a game object
+  // This function should return true if the two game objects are colliding.
+  glm::vec2 ballCenter(one.Position + one.Radius);
+  glm::vec2 aabbHalfSize(two.Size / 2.0f);
+  glm::vec2 aabbCenter(two.Position + aabbHalfSize);
+
+  glm::vec2 difference = ballCenter - aabbCenter;
+  glm::vec2 clamped = glm::clamp(difference, -aabbHalfSize, aabbHalfSize);
+
+  // Find the closest point on the AABB to the ball center
+  glm::vec2 closest = aabbCenter + clamped;
+  // Calculate the distance between the closest point and the ball center
+  difference = closest - ballCenter;
+
+  return glm::length(difference) < one.Radius;
+}
+
+void Game::DoCollisions()
+{
+  // Check for collisions between the ball and the player paddle
+  if (this->CheckCollision(*this->Ball, *this->Player))
+  {
+    this->Ball->Velocity.y = -this->Ball->Velocity.y; // Reverse ball's vertical velocity
+  }
+
+  // Check for collisions with blocks in the current level
+  GameLevel &currentLevel = this->Levels[this->CurrentLevel];
+  for (GameObject &block : currentLevel.Bricks)
+  {
+    if (block.Destroyed)
+      continue; // Skip destroyed blocks
+    if (this->CheckCollision(*this->Ball, block))
+    {
+      if (block.IsSolid)
+      {
+        // Handle collision with solid blocks
+        this->Ball->Velocity.y = -this->Ball->Velocity.y; // Reverse ball's vertical velocity
+      }
+      else if (!block.IsSolid)
+      {
+        // Handle collision with non-solid blocks
+        this->Ball->Velocity.y = -this->Ball->Velocity.y; // Reverse ball's vertical velocity
+        block.Destroyed = true;                           // Mark block as destroyed
+      }
+    }
   }
 }
