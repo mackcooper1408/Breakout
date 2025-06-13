@@ -3,6 +3,7 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <tuple>
 
 #include "sprite_renderer.hpp"
 #include "game_level.hpp"
@@ -15,6 +16,16 @@ enum GameState
   GAME_MENU,
   GAME_WIN
 };
+
+enum Direction
+{
+  UP,
+  RIGHT,
+  DOWN,
+  LEFT
+};
+
+typedef std::tuple<bool, Direction, glm::vec2> Collision;
 
 class Game
 {
@@ -45,8 +56,13 @@ private:
   GameObject *Player;
   BallObject *Ball;
 
-  bool CheckCollision(BallObject &one, GameObject &two);
+  void ResetLevel();
+  void ResetPlayer();
+
   bool CheckCollision(GameObject &one, GameObject &two);
+  Collision CheckCollision(BallObject &one, GameObject &two);
+
+  Direction VectorDirection(glm::vec2 target);
 };
 
 #endif // GAME_H
