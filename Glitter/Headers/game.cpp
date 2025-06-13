@@ -205,6 +205,15 @@ void Game::DoCollisions()
 
 void Game::ResetLevel()
 {
+  // Could also just reload all the levels...
+  // if (CurrentLevel == 0)
+  //       Levels[0].Load("levels/one.lvl", Width, Height / 2);
+  //   else if (CurrentLevel == 1)
+  //       Levels[1].Load("levels/two.lvl", Width, Height / 2);
+  //   else if (CurrentLevel == 2)
+  //       Levels[2].Load("levels/three.lvl", Width, Height / 2);
+  //   else if (CurrentLevel == 3)
+  //       Levels[3].Load("levels/four.lvl", Width, Height / 2);
   for (GameObject &brick : Levels[CurrentLevel].Bricks)
   {
     brick.Destroyed = false;
@@ -213,10 +222,10 @@ void Game::ResetLevel()
 
 void Game::ResetPlayer()
 {
-  Player->Position.x = Width / 2.0f - (PLAYER_SIZE.x / 2.0f);
-  Ball->Stuck = true;
-  Ball->Position = Player->Position + glm::vec2(PLAYER_SIZE.x / 2.0f - BALL_RADIUS,
-                                                -BALL_RADIUS * 2.0f);
+  Player->Size = PLAYER_SIZE;
+  Player->Position = glm::vec2(Width / 2.0f - (PLAYER_SIZE.x / 2.0f), Height - PLAYER_SIZE.y);
+  Ball->Reset(Player->Position + glm::vec2(PLAYER_SIZE.x / 2.0f - BALL_RADIUS, -BALL_RADIUS * 2.0f),
+              INITIAL_BALL_VELOCITY);
 }
 
 Direction Game::VectorDirection(glm::vec2 target)
