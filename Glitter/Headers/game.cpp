@@ -23,16 +23,25 @@ Game::~Game()
 
 void Game::Init()
 {
-  // Initialize game state, load shaders, textures, etc.
-  // This is where you would set up your game resources.
-  ResourceManager::LoadShader("Glitter/Shaders/sprite_shader.vert", "Glitter/Shaders/sprite_shader.frag",
-                              nullptr, "sprite");
+  // Set game projection matrix
   glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(Width),
                                     static_cast<float>(Height), 0.0f, -1.0f, 1.0f);
+  // Load shaders
+  ResourceManager::LoadShader("Glitter/Shaders/sprite_shader.vert",
+                              "Glitter/Shaders/sprite_shader.frag",
+                              nullptr, "sprite");
+  ResourceManager::LoadShader("Glitter/Shaders/particle_shader.vert",
+                              "Glitter/Shaders/particle_shader.frag",
+                              nullptr, "particle");
 
   ResourceManager::GetShader("sprite").Use();
   ResourceManager::GetShader("sprite").SetInteger("spriteTexture", 0);
   ResourceManager::GetShader("sprite").SetMatrix4("projection", projection);
+
+  ResourceManager::GetShader("particle").Use();
+  ResourceManager::GetShader("particle").SetInteger("sprite", 0);
+  ResourceManager::GetShader("particle").SetMatrix4("projection", projection);
+
   Renderer = new SpriteRenderer(ResourceManager::GetShader("sprite"));
 
   // Load textures
@@ -41,6 +50,7 @@ void Game::Init()
   ResourceManager::LoadTexture("Glitter/Textures/block.png", false, "block");
   ResourceManager::LoadTexture("Glitter/Textures/block_solid.png", false, "block_solid");
   ResourceManager::LoadTexture("Glitter/Textures/paddle.png", true, "paddle");
+  ResourceManager::LoadTexture("Glitter/Textures/particle.png", true, "particle");
 
   // Load levels
   GameLevel one, two, three, four;
@@ -64,6 +74,12 @@ void Game::Init()
                                             -BALL_RADIUS * 2.0f);
   Ball = new BallObject(ballPos, BALL_RADIUS, INITIAL_BALL_VELOCITY,
                         ResourceManager::GetTexture("face"));
+
+  // Inititalize the Particle Generator
+  Particles = new ParticleGenerator(
+      ResourceManager::GetShader("particle"),
+      ResourceManager::GetTexture("particle"),
+      500);
 
   // Set initial game state
   // TODO: SET VIA MENU
@@ -119,6 +135,8 @@ void Game::Update(float dt)
   Ball->Move(dt, Width);
   DoCollisions();
 
+  Particles->Update(dt, *Ball, 2, glm::vec2(Ball->Radius / 2.0f));
+
   if (Ball->Position.y >= Height)
   {
     ResetLevel();
@@ -137,8 +155,13 @@ void Game::Render()
                          glm::vec2(static_cast<float>(Width), static_cast<float>(Height)));
     // Draw current level
     Levels[CurrentLevel].Draw(*Renderer);
+
     // Draw player paddle
     Player->Draw(*Renderer);
+
+    // Draw Particles
+    Particles->Draw();
+
     // Draw ball object
     Ball->Draw(*Renderer);
   }

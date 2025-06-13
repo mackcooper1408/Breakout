@@ -9,6 +9,7 @@
 #include "game_level.hpp"
 #include "game_object.hpp"
 #include "ball_object.hpp"
+#include "particle_generator.hpp"
 
 enum GameState
 {
@@ -55,6 +56,7 @@ private:
   SpriteRenderer *Renderer;
   GameObject *Player;
   BallObject *Ball;
+  ParticleGenerator *Particles;
 
   void ResetLevel();
   void ResetPlayer();
