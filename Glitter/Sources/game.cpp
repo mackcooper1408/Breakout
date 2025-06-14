@@ -1,7 +1,11 @@
 #include <tuple>
+#include <string>
 
 #include "game.hpp"
 #include "resource_manager.hpp"
+
+const std::string g_project_source_dir = PROJECT_SOURCE_DIR;
+const std::string basePath = g_project_source_dir + "/Glitter";
 
 // Initial size of the player paddle
 const glm::vec2 PLAYER_SIZE(100.0f, 20.0f);
@@ -27,11 +31,11 @@ void Game::Init()
   glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(Width),
                                     static_cast<float>(Height), 0.0f, -1.0f, 1.0f);
   // Load shaders
-  ResourceManager::LoadShader("Glitter/Shaders/sprite_shader.vert",
-                              "Glitter/Shaders/sprite_shader.frag",
+  ResourceManager::LoadShader((basePath + "/Shaders/sprite_shader.vert").c_str(),
+                              (basePath + "/Shaders/sprite_shader.frag").c_str(),
                               nullptr, "sprite");
-  ResourceManager::LoadShader("Glitter/Shaders/particle_shader.vert",
-                              "Glitter/Shaders/particle_shader.frag",
+  ResourceManager::LoadShader((basePath + "/Shaders/particle_shader.vert").c_str(),
+                              (basePath + "/Shaders/particle_shader.frag").c_str(),
                               nullptr, "particle");
 
   ResourceManager::GetShader("sprite").Use();
@@ -45,19 +49,21 @@ void Game::Init()
   Renderer = new SpriteRenderer(ResourceManager::GetShader("sprite"));
 
   // Load textures
-  ResourceManager::LoadTexture("Glitter/Textures/background.jpg", false, "background");
-  ResourceManager::LoadTexture("Glitter/Textures/awesomeface.png", true, "face");
-  ResourceManager::LoadTexture("Glitter/Textures/block.png", false, "block");
-  ResourceManager::LoadTexture("Glitter/Textures/block_solid.png", false, "block_solid");
-  ResourceManager::LoadTexture("Glitter/Textures/paddle.png", true, "paddle");
-  ResourceManager::LoadTexture("Glitter/Textures/particle.png", true, "particle");
+  ResourceManager::LoadTexture(
+      (basePath + "/Textures/background.jpg").c_str(), false, "background");
+  ResourceManager::LoadTexture((basePath + "/Textures/awesomeface.png").c_str(), true, "face");
+  ResourceManager::LoadTexture((basePath + "/Textures/block.png").c_str(), false, "block");
+  ResourceManager::LoadTexture(
+      (basePath + "/Textures/block_solid.png").c_str(), false, "block_solid");
+  ResourceManager::LoadTexture((basePath + "/Textures/paddle.png").c_str(), true, "paddle");
+  ResourceManager::LoadTexture((basePath + "/Textures/particle.png").c_str(), true, "particle");
 
   // Load levels
   GameLevel one, two, three, four;
-  one.Load("Glitter/Levels/one.lvl", Width, Height / 2);
-  two.Load("Glitter/Levels/two.lvl", Width, Height / 2);
-  three.Load("Glitter/Levels/three.lvl", Width, Height / 2);
-  four.Load("Glitter/Levels/four.lvl", Width, Height / 2);
+  one.Load((basePath + "/Levels/one.lvl").c_str(), Width, Height / 2);
+  two.Load((basePath + "/Levels/two.lvl").c_str(), Width, Height / 2);
+  three.Load((basePath + "/Levels/three.lvl").c_str(), Width, Height / 2);
+  four.Load((basePath + "/Levels/four.lvl").c_str(), Width, Height / 2);
   Levels.push_back(one);
   Levels.push_back(two);
   Levels.push_back(three);
