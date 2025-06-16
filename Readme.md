@@ -2,6 +2,10 @@
 
 A simple 2D game based on the 1976 [Atari game](https://atari.com/pages/breakout) and following the breakout game [learnopengl tutorial](https://learnopengl.com/In-Practice/2D-Game/Breakout). This project is built using C++ and OpenGL and serves as a demonstration of basic game development concepts such as rendering, input handling, and game logic. The boilerplate code is built on top of [Glitter](https://github.com/Polytonic/Glitter), which provides a simple OpenGL setup and window management along with a CMake configuration linking a handful of useful libraries for OpenGL graphics and basic game development.
 
+<p align="center">
+<img width="800" alt="Screenshot 2025-06-16 at 1 26 02 PM" src="https://github.com/user-attachments/assets/b00b35f5-a006-4529-a844-0be190e295a8" />
+</p>
+
 ## Getting Started (mostly copied from Glitter's Readme)
 
 This project has a single dependency: [cmake](http://www.cmake.org/download/), which is used to generate platform-specific makefiles or project files. Start by cloning this repository, making sure to pass the `--recursive` flag to grab all the dependencies. If you forgot, then you can `git submodule update --init` instead.
