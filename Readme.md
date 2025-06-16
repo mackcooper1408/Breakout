@@ -2,13 +2,13 @@
 
 A simple 2D game based on the 1976 [Atari game](https://atari.com/pages/breakout) and following the breakout game [learnopengl tutorial](https://learnopengl.com/In-Practice/2D-Game/Breakout). This project is built using C++ and OpenGL and serves as a demonstration of basic game development concepts such as rendering, input handling, and game logic. The boilerplate code is built on top of [Glitter](https://github.com/Polytonic/Glitter), which provides a simple OpenGL setup and window management along with a CMake configuration linking a handful of useful libraries for OpenGL graphics and basic game development.
 
-## Getting Started (copied from Glitter's Readme)
+## Getting Started (mostly copied from Glitter's Readme)
 
-Glitter has a single dependency: [cmake](http://www.cmake.org/download/), which is used to generate platform-specific makefiles or project files. Start by cloning this repository, making sure to pass the `--recursive` flag to grab all the dependencies. If you forgot, then you can `git submodule update --init` instead.
+This project has a single dependency: [cmake](http://www.cmake.org/download/), which is used to generate platform-specific makefiles or project files. Start by cloning this repository, making sure to pass the `--recursive` flag to grab all the dependencies. If you forgot, then you can `git submodule update --init` instead.
 
 ```bash
-git clone --recursive https://github.com/Polytonic/Glitter
-cd Glitter
+git clone --recursive https://github.com/mackcooper1408/Breakout
+cd Breakout
 cd Build
 ```
 
@@ -26,8 +26,6 @@ cmake -G "Visual Studio 14" ..
 cmake -G "Visual Studio 14 Win64" ..
 ...
 ```
-
-If you compile and run, you should now be at the same point as the [Hello Window](http://www.learnopengl.com/#!Getting-started/Hello-Window) or [Context Creation](https://open.gl/context) sections of the tutorials. Open [main.cpp](https://github.com/Polytonic/Glitter/blob/master/Glitter/Sources/main.cpp) on your computer and start writing code!
 
 ## License for using Glitter
 
