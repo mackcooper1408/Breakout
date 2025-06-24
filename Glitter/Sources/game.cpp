@@ -16,13 +16,20 @@ const float BALL_RADIUS = 12.5f;
 // Initial velocity of the Ball
 const glm::vec2 INITIAL_BALL_VELOCITY(100.0f, -350.0f);
 
+float ShakeTime = 0.0f;
+
 Game::Game(unsigned int width, unsigned int height)
-    : State(GAME_MENU), Width(width), Height(height)
+    : State(GAME_ACTIVE), Width(width), Height(height)
 {
 }
 
 Game::~Game()
 {
+  delete Renderer;
+  delete Player;
+  delete Ball;
+  delete Particles;
+  delete Effects;
 }
 
 void Game::Init()
@@ -37,6 +44,9 @@ void Game::Init()
   ResourceManager::LoadShader((basePath + "/Shaders/particle_shader.vert").c_str(),
                               (basePath + "/Shaders/particle_shader.frag").c_str(),
                               nullptr, "particle");
+  ResourceManager::LoadShader((basePath + "/Shaders/post_proc_shader.vert").c_str(),
+                              (basePath + "/Shaders/post_proc_shader.frag").c_str(),
+                              nullptr, "effects");
 
   ResourceManager::GetShader("sprite").Use();
   ResourceManager::GetShader("sprite").SetInteger("spriteTexture", 0);
@@ -47,6 +57,8 @@ void Game::Init()
   ResourceManager::GetShader("particle").SetMatrix4("projection", projection);
 
   Renderer = new SpriteRenderer(ResourceManager::GetShader("sprite"));
+
+  Effects = new PostProcessor(ResourceManager::GetShader("effects"), Width * 2, Height * 2);
 
   // Load textures
   ResourceManager::LoadTexture(
@@ -59,11 +71,15 @@ void Game::Init()
   ResourceManager::LoadTexture((basePath + "/Textures/particle.png").c_str(), true, "particle");
 
   // Load levels
-  GameLevel one, two, three, four;
+  GameLevel one, two, three, four, solid;
   one.Load((basePath + "/Levels/one.lvl").c_str(), Width, Height / 2);
   two.Load((basePath + "/Levels/two.lvl").c_str(), Width, Height / 2);
   three.Load((basePath + "/Levels/three.lvl").c_str(), Width, Height / 2);
   four.Load((basePath + "/Levels/four.lvl").c_str(), Width, Height / 2);
+
+  // solid.Load((basePath + "/Levels/solid.lvl").c_str(), Width, Height / 2);
+  // Levels.push_back(solid);
+
   Levels.push_back(one);
   Levels.push_back(two);
   Levels.push_back(three);
@@ -86,10 +102,6 @@ void Game::Init()
       ResourceManager::GetShader("particle"),
       ResourceManager::GetTexture("particle"),
       500);
-
-  // Set initial game state
-  // TODO: SET VIA MENU
-  State = GAME_ACTIVE;
 }
 
 void Game::ProcessInput(float dt)
@@ -148,6 +160,13 @@ void Game::Update(float dt)
     ResetLevel();
     ResetPlayer();
   }
+
+  if (ShakeTime > 0.0f)
+  {
+    ShakeTime -= dt;
+    if (ShakeTime <= 0.0f)
+      Effects->Shake = false;
+  }
 }
 
 void Game::Render()
@@ -156,6 +175,8 @@ void Game::Render()
   // This function should draw the game objects to the screen.;
   if (State == GAME_ACTIVE)
   {
+    Effects->BeginRender();
+
     // Draw background
     Renderer->DrawSprite(ResourceManager::GetTexture("background"), glm::vec2(0.0f, 0.0f),
                          glm::vec2(static_cast<float>(Width), static_cast<float>(Height)));
@@ -170,6 +191,9 @@ void Game::Render()
 
     // Draw ball object
     Ball->Draw(*Renderer);
+
+    Effects->EndRender();
+    Effects->Render(glfwGetTime());
   }
 }
 
@@ -202,6 +226,12 @@ void Game::DoCollisions()
     {
       if (!block.IsSolid)
         block.Destroyed = true; // Mark block as destroyed
+      else
+      {
+        // shake screen when hitting solid bricks
+        ShakeTime = 0.05f;
+        Effects->Shake = true;
+      }
 
       Direction dir = std::get<1>(blockCollision);
       glm::vec2 diff = std::get<2>(blockCollision);

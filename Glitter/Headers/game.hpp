@@ -10,6 +10,7 @@
 #include "game_object.hpp"
 #include "ball_object.hpp"
 #include "particle_generator.hpp"
+#include "post_processor.hpp"
 
 enum GameState
 {
@@ -57,6 +58,7 @@ private:
   GameObject *Player;
   BallObject *Ball;
   ParticleGenerator *Particles;
+  PostProcessor *Effects;
 
   void ResetLevel();
   void ResetPlayer();
