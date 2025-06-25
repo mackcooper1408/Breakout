@@ -11,6 +11,7 @@
 #include "ball_object.hpp"
 #include "particle_generator.hpp"
 #include "post_processor.hpp"
+#include "power_up.hpp"
 
 enum GameState
 {
@@ -39,6 +40,8 @@ public:
   std::vector<GameLevel> Levels;
   unsigned int CurrentLevel;
 
+  std::vector<PowerUp> PowerUps;
+
   // Constructor/Destructor
   Game(unsigned int width, unsigned int height);
   ~Game();
@@ -53,6 +56,9 @@ public:
 
   void DoCollisions();
 
+  void SpawnPowerUps(GameObject &block);
+  void UpdatePowerUps(float dt);
+
 private:
   SpriteRenderer *Renderer;
   GameObject *Player;
@@ -60,13 +66,19 @@ private:
   ParticleGenerator *Particles;
   PostProcessor *Effects;
 
+  // Reset Helpers
   void ResetLevel();
   void ResetPlayer();
 
+  // collision helpers
   bool CheckCollision(GameObject &one, GameObject &two);
   Collision CheckCollision(BallObject &one, GameObject &two);
-
   Direction VectorDirection(glm::vec2 target);
+
+  // Powerup Helpers
+  bool ShouldSpawn(unsigned int chance);
+  void ActivatePowerUp(PowerUp &powerUp);
+  bool IsOtherPowerUpActive(std::vector<PowerUp> &powerUps, std::string type);
 };
 
 #endif // GAME_H
