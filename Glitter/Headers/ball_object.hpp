@@ -13,6 +13,10 @@ public:
   float Radius;
   bool Stuck;
 
+  // PowerUp Effects
+  bool Sticky;
+  bool PassThrough;
+
   // Constructor
   BallObject();
   BallObject(glm::vec2 pos, float radius, glm::vec2 velocity, Texture2D sprite);
